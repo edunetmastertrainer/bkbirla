@@ -6,8 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Welcome to My App</h1>
-    <h2>{{user.username}}</h2>
-    <a href="{% url 'addprofile' %}">Add Profile</a>
+    <form method='post' enctype='multipart/form-data'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type='submit' value='Submit'>
+
+    </form>
 </body>
 </html>
