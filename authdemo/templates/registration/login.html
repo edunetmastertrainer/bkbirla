@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block main %}
     <form method='post'>
         {% csrf_token %}
         {{form.as_p}}
@@ -13,5 +7,4 @@
         <input type="hidden" name="next" value="{% url 'dashboard' %}">
         <a href="{% url 'registration' %}">Register</a>
     </form>
-</body>
-</html>
+{% endblock main %}

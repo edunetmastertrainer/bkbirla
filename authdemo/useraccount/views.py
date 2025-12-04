@@ -24,3 +24,6 @@ def addprofile(request):
     else:
         form = ProfileForm()
     return render(request, 'addprofile.html', {'form': form})
+
+def home(request):
+    return render(request,'home.html')

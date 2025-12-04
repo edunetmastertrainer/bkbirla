@@ -1,0 +1,19 @@
+body{
+    background-color: aquamarine;
+}
+ul{
+    list-style-type: none;
+    margin: 0;
+    background-color: brown;
+}
+li{
+    display: inline;
+    margin-right: 20px;
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+li:hover{
+    background-color: black;
+}

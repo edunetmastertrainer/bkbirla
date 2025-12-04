@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block main %}
     <h1>Welcome to My App</h1>
     <h2>{{user.username}}</h2>
     <a href="{% url 'addprofile' %}">Add Profile</a>
-</body>
-</html>
+    {% if user.is_authenticated %}
+        {% include "registration/_logout.html" %}
+    {% endif %}
+{% endblock main %}
