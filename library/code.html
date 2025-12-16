@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Books Manager</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #books-list { margin-bottom: 20px; }
+        #update-form { display: none; }
+        button { margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Library Books</h1>
+    
+    <!-- Section to list books -->
+    <div id="books-list">
+        <h2>All Books</h2>
+        <button onclick="fetchBooks()">Load Books</button>
+        <ul id="books-ul"></ul>
+    </div>
+    
+    <!-- Section to update a book -->
+    <div id="update-form">
+        <h2>Update Book</h2>
+        <form id="book-form">
+            <label>Title: <input type="text" id="title" required></label><br>
+            <label>Author: <input type="text" id="author" required></label><br>
+            <label>Published Date: <input type="date" id="published_date" required></label><br>
+            <label>ISBN: <input type="text" id="isbn" required></label><br>
+            <button type="submit">Update Book</button>
+            <button type="button" onclick="hideUpdateForm()">Cancel</button>
+        </form>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/books/';  // Adjust if your server URL differs
+        let selectedBookId = null;
+
+        // Function to fetch and display all books
+        async function fetchBooks() {
+            try {
+                const response = await fetch(API_BASE);
+                if (!response.ok) throw new Error('Failed to fetch books');
+                const books = await response.json();
+                const ul = document.getElementById('books-ul');
+                ul.innerHTML = '';  // Clear previous list
+                books.forEach(book => {
+                    const li = document.createElement('li');
+                    li.textContent = `${book.id}: ${book.title} by ${book.author}`;
+                    const updateBtn = document.createElement('button');
+                    updateBtn.textContent = 'Update';
+                    updateBtn.onclick = () => loadBookForUpdate(book.id);
+                    li.appendChild(updateBtn);
+                    ul.appendChild(li);
+                });
+            } catch (error) {
+                alert('Error fetching books: ' + error.message);
+            }
+        }
+
+        // Function to fetch a specific book and populate the update form
+        async function loadBookForUpdate(id) {
+            try {
+                const response = await fetch(`${API_BASE}${id}/`);
+                if (!response.ok) throw new Error('Failed to fetch book details');
+                const book = await response.json();
+                // Populate form fields
+                document.getElementById('title').value = book.title;
+                document.getElementById('author').value = book.author;
+                document.getElementById('published_date').value = book.published_date;
+                document.getElementById('isbn').value = book.isbn;
+                selectedBookId = id;
+                document.getElementById('update-form').style.display = 'block';
+            } catch (error) {
+                alert('Error loading book: ' + error.message);
+            }
+        }
+
+        // Function to update a book via PUT request
+        document.getElementById('book-form').addEventListener('submit', async (e) => {
+            e.preventDefault();  // Prevent form reload
+            if (!selectedBookId) return;
+            const updatedBook = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                published_date: document.getElementById('published_date').value,
+                isbn: document.getElementById('isbn').value,
+            };
+            try {
+                const response = await fetch(`${API_BASE}${selectedBookId}/`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedBook),
+                });
+                if (!response.ok) throw new Error('Failed to update book');
+                alert('Book updated successfully!');
+                hideUpdateForm();
+                fetchBooks();  // Refresh the list
+            } catch (error) {
+                alert('Error updating book: ' + error.message);
+            }
+        });
+
+        // Function to hide the update form
+        function hideUpdateForm() {
+            document.getElementById('update-form').style.display = 'none';
+            selectedBookId = null;
+        }
+    </script>
+</body>
+</html>
